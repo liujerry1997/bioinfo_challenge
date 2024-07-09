@@ -26,7 +26,7 @@ To build the Docker image, run:
 make build
 ```
 
-To test nextflow workflow within Docker image, run:
+To test nextflow workflow locally, run:
 
 ```bash
 make test
