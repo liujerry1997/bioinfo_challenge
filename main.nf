@@ -17,7 +17,7 @@ process ANNOTATE_VCF {
         path vcf_file_path
         val output_tsv_name
     output:
-        path output_tsv_name, emit: txt
+        path output_tsv_name
     script:
     """
     annotate_vcf.py --vcf_file_path ${vcf_file_path} --output_tsv_name ${output_tsv_name}
