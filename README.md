@@ -2,13 +2,13 @@
 
 This is a Nextflow pipeline for variant annotation. This repo includes the following files:
 
-- `main.nf`: This is the main Nextflow workflow that calls process file in `/modules` folder.
+- `main.nf`: This is the main Nextflow workflow file that calls python scripts in `bin` folder.
 - `nextflow.config`: This file sets up default inputs and other profiles whrn running in different environment.
 - `tests`: A folder with test inputs to go with the default parameters in `nextflow.config`.
 - `environment.yml`: Needed depdendcies that will be installed using Conda.
 - `Dockerfile`: Makes an image with dependencies.
 - `Makefile`: Basic commands to build, test and deploy the software image.
-- `annotated_outputs/output_vcf_data.tsv`: The annotated variants file from this challenge.
+- `annotated_outputs/output_annotation.tsv`: The annotated variants file from this challenge. See detail in section **Output TSV File**.
 
 If your system do have not nextflow or java install, follow this [installation guide](https://www.nextflow.io/docs/latest/install.html) to do so.
 
@@ -65,3 +65,21 @@ The command below starts a new container from the image, sets the current workin
 ```bash
 make shell
 ```
+
+## Output TSV File
+
+The output TSV file contains annotation for each variant in the provided vcf file. The included annotation columns are:
+- `CHROM`: Variant's Chromosome
+- `POS`: The location of the variant on Chromosome
+- `REF`: Reference allele
+- `ALT`: The list of alternate allele(s)
+- `Quality`: Quality of the variant
+- `total_coverage`: Depth of sequence coverage at the site of variation
+- `reads_supporting_variant`: Number of reads supporting the variant
+- `Read_Pct_Varaint_verses_Reference`: percentage of reads supporting the variant verses reference
+- `Variant_Allele_Freq`: Variant allele frequency, which is equal to reads_supporting_variant / total_coverage
+- `Gene_ids`: Gene ids of the variant from VEP hgvs API
+- `Variation_Types`: Type of variation from VEP hgvs API
+- `Effects`: Variant's effect from VEP hgvs API
+- `Minor_Allele_Freq`: Minor allele frequency
+
