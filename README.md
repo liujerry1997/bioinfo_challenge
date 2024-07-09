@@ -1,4 +1,4 @@
-# tempus_bioinfo_challenge
+# Tempus Bioinformatics Challenge
 
 This is a Nextflow pipeline for variant annotation. This repo includes the following files:
 
