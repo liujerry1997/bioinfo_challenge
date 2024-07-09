@@ -2,7 +2,7 @@
 
 This is a Nextflow pipeline for variant annotation. This repo includes the following files:
 
-- `main.nf`: This is the main Nextflow workflow that calls process file in /modules folder.
+- `main.nf`: This is the main Nextflow workflow that calls process file in `/modules` folder.
 - `nextflow.config`: This file sets up default inputs and other profiles whrn running in different environment.
 - `tests`: A folder with test inputs to go with the default parameters in `nextflow.config`.
 - `environment.yml`: Needed depdendcies that will be installed using Conda.
