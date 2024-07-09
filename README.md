@@ -8,7 +8,7 @@ This is a Nextflow pipeline for variant annotation. This repo includes the follo
 - `environment.yml`: Needed depdendcies that will be installed using Conda.
 - `Dockerfile`: Makes an image with dependencies.
 - `Makefile`: Basic commands to build, test and deploy the software image.
-
+- `annotated_outputs/output_vcf_data.tsv`: The annotated variants file from this challenge.
 
 If your system do have not nextflow or java install, follow this [installation guide](https://www.nextflow.io/docs/latest/install.html) to do so.
 
