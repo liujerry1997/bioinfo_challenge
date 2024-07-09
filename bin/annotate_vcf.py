@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 
 import argparse
+import csv
 import logging
 from statistics import mean
-from cyvcf2 import VCF, Writer
+import cyvcf2
+from cyvcf2 import VCF
 from hgvs_vep_query import get_variant_vep_info
 
 
@@ -41,57 +43,84 @@ added_head_info_list = [
 ]
 
 
-def annotate_variants(vcf_file_path: str, output_vcf_name: str) -> str:
+def annotate_variants(vcf_file_path: str, output_tsv_name: str) -> str:
     """
     Annotates variants in the VCF file with additional information.
-    Added annotations include the percentage of reads supporting the variant,
-    gene information, variation type, variation effect, and minor allele frequency.
+    Added relevant annotations to output tsv file.
 
     Args:
         vcf_file_path (str): The path to the input VCF file.
-        output_vcf_name (str): The name of the output VCF file with annotations.
+        output_tsv_name (str): The name of the output VCF file with annotations.
 
     Returns:
-        output_vcf_name (str): The name of the output VCF file with annotations.
+        output_tsv_name (str): The name of the output VCF file with annotations.
     """
     vcf_reader = VCF(vcf_file_path)
     for info_header in added_head_info_list:
         vcf_reader.add_info_to_header(info_header)
 
-    vcf_writer = Writer(output_vcf_name, vcf_reader)
-    for variant in vcf_reader:
-        total_coverage = parse_helper(variant.INFO.get("TC"))
-        reads_supporting_variant = parse_helper(variant.INFO.get("TR"))
-        chrom, pos, ref, alt_list = variant.CHROM, variant.POS, variant.REF, variant.ALT
-        genotype_list = variant.genotypes
-
-        # Calculate the percentage of reads supporting the variant and add to INFO field
-        percentage_supporting_reads = get_variant_ref_read_percentage(
-            total_coverage, reads_supporting_variant
+    with open(output_tsv_name, "w", newline="") as csvfile:
+        writer = csv.writer(csvfile, delimiter="\t")
+        # Write the header row
+        writer.writerow(
+            [
+                "CHROM",
+                "POS",
+                "REF",
+                "ALT",
+                "HGVS Notation",
+                "Read Pct Varaint verses Reference",
+                "Variant Allele Freq",
+                "Gene ids",
+                "Variation Types",
+                "Effects",
+                "Genotypes",
+                "Minor Allele Freq",
+            ]
         )
-        variant.INFO["PctSuppReads"] = percentage_supporting_reads
+        for variant in vcf_reader:
+            writer.writerow(process_one_variant(variant))
 
-        # Query the VEP for the variant, and add the information to the INFO field
-        gene_ids, variation_types, effects = [], [], []
-        for alt in alt_list:  # Extacted ALT is a list of strings.
-            hgvs_notation = f"{chrom}:g.{pos}{ref}>{alt}"
-            vep_info_dict = get_variant_vep_info(hgvs_notation)
-            if vep_info_dict:
-                gene_ids.append(vep_info_dict.get("gene_id"))
-                variation_types.append(vep_info_dict.get("variation_type"))
-                effects.append(vep_info_dict.get("effect"))
-        variant.INFO["Gene"] = ",".join(gene_ids)
-        variant.INFO["VariationType"] = ",".join(variation_types)
-        variant.INFO["VariationEffect"] = ",".join(effects)
+    return output_tsv_name
 
-        minor_allele_freq = get_minor_allele_frequency(ref, alt_list, genotype_list)
-        variant.INFO["MAF"] = minor_allele_freq
 
-        # Write the annotated variant to the new VCF file
-        vcf_writer.write_record(variant)
+def process_one_variant(variant: cyvcf2.cyvcf2.Variant) -> list:
+    total_coverage = parse_helper(variant.INFO.get("TC"))
+    reads_supporting_variant = parse_helper(variant.INFO.get("TR"))
+    chrom, pos, ref, alt_list = variant.CHROM, variant.POS, variant.REF, variant.ALT
+    genotype_list = variant.genotypes
 
-    vcf_writer.close()
-    return output_vcf_name
+    # Calculate the percentage of reads supporting the variant and add to INFO field
+    percentage_supporting_reads = get_variant_ref_read_percentage(
+        total_coverage, reads_supporting_variant
+    )
+    variant_allele_freq = get_variant_allele_percentage(total_coverage, reads_supporting_variant)
+
+    # Query the VEP for the variant, and add the information to the INFO field
+    gene_ids, variation_types, effects = [], [], []
+    for alt in alt_list:  # Extacted ALT is a list of strings.
+        hgvs_notation = f"{chrom}:g.{pos}{ref}>{alt}"
+        vep_info_dict = get_variant_vep_info(hgvs_notation)
+        if vep_info_dict:
+            gene_ids.append(vep_info_dict.get("gene_id"))
+            variation_types.append(vep_info_dict.get("variation_type"))
+            effects.append(vep_info_dict.get("effect"))
+    minor_allele_freq = get_minor_allele_frequency(ref, alt_list, genotype_list)
+
+    return [
+        chrom,
+        pos,
+        ref,
+        alt_list,
+        hgvs_notation,
+        percentage_supporting_reads,
+        variant_allele_freq,
+        ",".join(gene_ids),
+        ",".join(variation_types),
+        ",".join(effects),
+        genotype_list,
+        minor_allele_freq,
+    ]
 
 
 def get_variant_ref_read_percentage(total_coverage: int, reads_supporting_variant: int) -> float:
@@ -189,10 +218,10 @@ def main():
         description="Annotate VCF file with the percentage of reads supporting the variant."
     )
     parser.add_argument("--vcf_file_path", help="Path to the input VCF file")
-    parser.add_argument("--output_vcf_name", help="Name of the output VCF file with annotations")
+    parser.add_argument("--output_tsv_name", help="Name of the output VCF file with annotations")
 
     args = parser.parse_args()
-    annotate_variants(args.vcf_file_path, args.output_vcf_name)
+    annotate_variants(args.vcf_file_path, args.output_tsv_name)
 
 
 if __name__ == "__main__":
