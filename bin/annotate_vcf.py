@@ -68,16 +68,15 @@ def annotate_variants(vcf_file_path: str, output_tsv_name: str) -> str:
                 "POS",
                 "REF",
                 "ALT",
-                "HGVS Notation",
+                "Quality",
                 "total_coverage",
                 "reads_supporting_variant",
-                "Read Pct Varaint verses Reference",
-                "Variant Allele Freq",
-                "Gene ids",
-                "Variation Types",
+                "Read_Pct_Varaint_verses_Reference",
+                "Variant_Allele_Freq",
+                "Gene_ids",
+                "Variation_Types",
                 "Effects",
-                "Genotypes",
-                "Minor Allele Freq",
+                "Minor_Allele_Freq",
             ]
         )
         for variant in vcf_reader:
@@ -100,7 +99,13 @@ def process_one_variant(variant: cyvcf2.cyvcf2.Variant) -> list:
     """
     total_coverage = parse_helper(variant.INFO.get("TC"))
     reads_supporting_variant = parse_helper(variant.INFO.get("TR"))
-    chrom, pos, ref, alt_list = variant.CHROM, variant.POS, variant.REF, variant.ALT
+    chrom, pos, ref, alt_list, quality = (
+        variant.CHROM,
+        variant.POS,
+        variant.REF,
+        variant.ALT,
+        variant.QUAL,
+    )
     genotype_list = variant.genotypes
 
     # Calculate the percentage of reads supporting the variant and add to INFO field
@@ -125,7 +130,7 @@ def process_one_variant(variant: cyvcf2.cyvcf2.Variant) -> list:
         pos,
         ref,
         alt_list,
-        hgvs_notation,
+        quality,
         total_coverage,
         reads_supporting_variant,
         percentage_supporting_reads,
@@ -133,7 +138,6 @@ def process_one_variant(variant: cyvcf2.cyvcf2.Variant) -> list:
         ",".join(gene_ids),
         ",".join(variation_types),
         ",".join(effects),
-        genotype_list,
         minor_allele_freq,
     ]
 
