@@ -84,11 +84,11 @@ def test_parse_helper():
 
 def test_annotate_variants():
     """
-    A function to test the annotation of variants in a VCF file.
+    A function to test if annotate_variants function properly annotates variants.
     """
     vcf_file_path = "tests/data/short_vcf_data.txt"
-    output_vcf_name = "tests/data/short_vcf_data_annotated.txt"
+    output_tsv_name = "tests/data/short_vcf_data_annotated.tsv"
+    output_tsv_name = annotate_variants(vcf_file_path, output_tsv_name)
 
-    expected_short_vcf_data_annotated = "tests/data/expected_short_vcf_data_annotated.txt"
-    assert annotate_variants(vcf_file_path, output_vcf_name) == output_vcf_name
-    assert filecmp.cmp(output_vcf_name, expected_short_vcf_data_annotated)
+    expected_tsv = "tests/data/expected_output.tsv"
+    assert filecmp.cmp(output_tsv_name, expected_tsv)
