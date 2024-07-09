@@ -69,6 +69,8 @@ def annotate_variants(vcf_file_path: str, output_tsv_name: str) -> str:
                 "REF",
                 "ALT",
                 "HGVS Notation",
+                "total_coverage",
+                "reads_supporting_variant",
                 "Read Pct Varaint verses Reference",
                 "Variant Allele Freq",
                 "Gene ids",
@@ -85,6 +87,17 @@ def annotate_variants(vcf_file_path: str, output_tsv_name: str) -> str:
 
 
 def process_one_variant(variant: cyvcf2.cyvcf2.Variant) -> list:
+    """
+    Process a single variant by calculating various metrics and querying VEP for additional information.
+
+    Args:
+        variant (cyvcf2.cyvcf2.Variant): The variant object to be processed.
+
+    Returns:
+        list: A list containing information about the processed variant including chromosomal position,
+              reference and alternate alleles, HGVS notation, percentage of reads supporting the variant verses reference,
+              variant allele frequency, gene IDs, variation types, effects, genotypes, and minor allele frequency.
+    """
     total_coverage = parse_helper(variant.INFO.get("TC"))
     reads_supporting_variant = parse_helper(variant.INFO.get("TR"))
     chrom, pos, ref, alt_list = variant.CHROM, variant.POS, variant.REF, variant.ALT
@@ -113,6 +126,8 @@ def process_one_variant(variant: cyvcf2.cyvcf2.Variant) -> list:
         ref,
         alt_list,
         hgvs_notation,
+        total_coverage,
+        reads_supporting_variant,
         percentage_supporting_reads,
         variant_allele_freq,
         ",".join(gene_ids),

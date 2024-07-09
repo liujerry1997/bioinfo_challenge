@@ -1,4 +1,4 @@
-CHROM	POS	REF	ALT	HGVS Notation	Read Pct Varaint verses Reference	Variant Allele Freq	Gene ids	Variation Types	Effects	Genotypes	Minor Allele Freq
-1	1158631	A	['G']	1:g.1158631A>G	3900.0	97.5	Unknown	MODIFIER	intergenic_variant	[[1, 1, False]]	0.0
-1	1246004	A	['G']	1:g.1246004A>G	3700.0	97.36842105263158	Unknown	Unknown	Unknown	[[1, 1, False]]	0.0
-1	1249187	G	['A']	1:g.1249187G>A	6750.0	98.54014598540147	Unknown	Unknown	Unknown	[[1, 1, False]]	0.0
+CHROM	POS	REF	ALT	HGVS Notation	total_coverage	reads_supporting_variant	Read Pct Varaint verses Reference	Variant Allele Freq	Gene ids	Variation Types	Effects	Genotypes	Minor Allele Freq
+1	1158631	A	['G']	1:g.1158631A>G	160	156	3900.0	97.5	Unknown	MODIFIER	intergenic_variant	[[1, 1, False]]	0.0
+1	1246004	A	['G']	1:g.1246004A>G	152	148	3700.0	97.36842105263158	Unknown	Unknown	Unknown	[[1, 1, False]]	0.0
+1	1249187	G	['A']	1:g.1249187G>A	137	135	6750.0	98.54014598540147	Unknown	Unknown	Unknown	[[1, 1, False]]	0.0
