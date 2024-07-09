@@ -15,15 +15,15 @@ process ANNOTATE_VCF {
     
     input:
         path vcf_file_path
-        val output_vcf_name
+        val output_tsv_name
     output:
-        path output_vcf_name, emit: txt
+        path output_tsv_name, emit: txt
     script:
     """
-    annotate_vcf.py --vcf_file_path ${vcf_file_path} --output_vcf_name ${output_vcf_name}
+    annotate_vcf.py --vcf_file_path ${vcf_file_path} --output_tsv_name ${output_tsv_name}
     """
 }
 
 workflow {
-    ANNOTATE_VCF(params.vcf_file_path, params.output_vcf_name)
+    ANNOTATE_VCF(params.vcf_file_path, params.output_tsv_name)
 }
