@@ -15,7 +15,8 @@ deploy:
 format:
 	black --include '.py$$' -l 100 bin tests
 
-test: build
+# Make sure your local environment has Nextflow and needed python dependencies installed
+test:
 	nextflow run main.nf -profile test
 
 test_unit: format build
