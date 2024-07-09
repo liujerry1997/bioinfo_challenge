@@ -66,7 +66,7 @@ def annotate_variants(vcf_file_path: str, output_vcf_name: str) -> str:
         genotype_list = variant.genotypes
 
         # Calculate the percentage of reads supporting the variant and add to INFO field
-        percentage_supporting_reads = get_variant_read_percentage(
+        percentage_supporting_reads = get_variant_ref_read_percentage(
             total_coverage, reads_supporting_variant
         )
         variant.INFO["PctSuppReads"] = percentage_supporting_reads
@@ -94,7 +94,28 @@ def annotate_variants(vcf_file_path: str, output_vcf_name: str) -> str:
     return output_vcf_name
 
 
-def get_variant_read_percentage(total_coverage: int, reads_supporting_variant: int) -> float:
+def get_variant_ref_read_percentage(total_coverage: int, reads_supporting_variant: int) -> float:
+    """
+    Calculate the percentage of reads supporting the variant versus those supporting reference reads.
+
+    Args:
+        total_coverage (int): The total coverage at the variant locus.
+        reads_supporting_variant (int): The number of reads supporting the variant.
+
+    Returns:
+        float: The percentage of reads supporting the variant versus those supporting reference reads.
+    """
+    if total_coverage > 0 and reads_supporting_variant >= 0:
+        reads_supporting_ref = total_coverage - reads_supporting_variant
+        if total_coverage == reads_supporting_variant:
+            return 100
+        percentage_var_ref = (reads_supporting_variant / reads_supporting_ref) * 100
+    else:
+        percentage_var_ref = None
+    return percentage_var_ref
+
+
+def get_variant_allele_percentage(total_coverage: int, reads_supporting_variant: int) -> float:
     """
     Calculate the percentage of reads supporting the variant.
 

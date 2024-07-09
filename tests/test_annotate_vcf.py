@@ -1,21 +1,36 @@
 import filecmp
 from bin.annotate_vcf import (
     annotate_variants,
-    get_variant_read_percentage,
+    get_variant_ref_read_percentage,
+    get_variant_allele_percentage,
     parse_helper,
     get_minor_allele_frequency,
 )
 
 
-def test_get_variant_read_percentage():
+def test_get_variant_ref_read_percentage():
+    """
+    A function to test the calculation of the percentage of reads supporting
+    the variant versus those supporting reference reads.
+    """
+    assert get_variant_ref_read_percentage(total_coverage=10, reads_supporting_variant=5) == 100
+    assert get_variant_ref_read_percentage(total_coverage=1, reads_supporting_variant=0) == 0
+    assert get_variant_ref_read_percentage(total_coverage=1, reads_supporting_variant=1) == 100
+    # No total variant coverage
+    assert get_variant_ref_read_percentage(total_coverage=0, reads_supporting_variant=1) == None
+    # Unexpected variant coverage
+    assert get_variant_ref_read_percentage(total_coverage=10, reads_supporting_variant=-1) == None
+
+
+def test_get_variant_allele_percentage():
     """
     A function to test the calculation of the percentage of reads supporting the variant.
     """
-    assert get_variant_read_percentage(10, 5) == 50
-    assert get_variant_read_percentage(1, 0) == 0
-    assert get_variant_read_percentage(1, 1) == 100
-    assert get_variant_read_percentage(0, 1) == None  # No total variant coverage
-    assert get_variant_read_percentage(10, -1) == None  # Unexpected variant coverage
+    assert get_variant_allele_percentage(10, 5) == 50
+    assert get_variant_allele_percentage(1, 0) == 0
+    assert get_variant_allele_percentage(1, 1) == 100
+    assert get_variant_allele_percentage(0, 1) == None  # No total variant coverage
+    assert get_variant_allele_percentage(10, -1) == None  # Unexpected variant coverage
 
 
 def test_get_minor_allele_frequency():
