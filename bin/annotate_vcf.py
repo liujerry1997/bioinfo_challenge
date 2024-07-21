@@ -9,39 +9,6 @@ from cyvcf2 import VCF
 from hgvs_vep_query import get_variant_vep_info
 
 
-added_head_info_list = [
-    {
-        "ID": "PctSuppReads",
-        "Description": "Percentage of reads supporting the variant",
-        "Type": "Float",
-        "Number": "1",
-    },
-    {
-        "ID": "Gene",
-        "Description": "The gene of the variant",
-        "Type": "String",
-        "Number": ".",
-    },
-    {
-        "ID": "VariationType",
-        "Description": "The type of variation",
-        "Type": "String",
-        "Number": ".",
-    },
-    {
-        "ID": "VariationEffect",
-        "Description": "The consequence/effect of variation",
-        "Type": "String",
-        "Number": ".",
-    },
-    {
-        "ID": "MAF",
-        "Description": "minor allele frequency",
-        "Type": "Float",
-        "Number": "1",
-    },
-]
-
 
 def annotate_variants(vcf_file_path: str, output_tsv_name: str) -> str:
     """
